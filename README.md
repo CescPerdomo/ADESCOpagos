@@ -150,10 +150,4 @@ php artisan up
 4. Push a la rama (`git push origin feature/AmazingFeature`)
 5. Abrir un Pull Request
 
-## Licencia
 
-Este proyecto está licenciado bajo la Licencia MIT - ver el archivo [LICENSE](LICENSE) para más detalles.
-
-## Soporte
-
-Para soporte, enviar un email a soporte@adesco.org.sv o crear un issue en el repositorio.
