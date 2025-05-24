@@ -1,7 +1,7 @@
 <x-app-layout>
     <x-slot name="header">
         <h2 class="font-semibold text-xl text-gray-800 leading-tight">
-            {{ __('Admin Dashboard') }}
+            {{ __('Panel de Administración') }}
         </h2>
     </x-slot>
 
@@ -12,7 +12,7 @@
                 <!-- Total Revenue -->
                 <div class="bg-white overflow-hidden shadow-sm sm:rounded-lg">
                     <div class="p-6">
-                        <div class="text-gray-500 text-sm font-medium">Total Revenue</div>
+                        <div class="text-gray-500 text-sm font-medium">Ingresos Totales</div>
                         <div class="mt-2 text-3xl font-bold text-gray-900">${{ number_format($totalRevenue, 2) }}</div>
                     </div>
                 </div>
@@ -20,7 +20,7 @@
                 <!-- Completed Payments -->
                 <div class="bg-white overflow-hidden shadow-sm sm:rounded-lg">
                     <div class="p-6">
-                        <div class="text-gray-500 text-sm font-medium">Completed Payments</div>
+                        <div class="text-gray-500 text-sm font-medium">Pagos Completados</div>
                         <div class="mt-2 text-3xl font-bold text-green-600">{{ $completedPayments }}</div>
                     </div>
                 </div>
@@ -28,7 +28,7 @@
                 <!-- Pending Payments -->
                 <div class="bg-white overflow-hidden shadow-sm sm:rounded-lg">
                     <div class="p-6">
-                        <div class="text-gray-500 text-sm font-medium">Pending Payments</div>
+                        <div class="text-gray-500 text-sm font-medium">Pagos Pendientes</div>
                         <div class="mt-2 text-3xl font-bold text-yellow-600">{{ $pendingPayments }}</div>
                     </div>
                 </div>
@@ -37,28 +37,28 @@
             <!-- Transactions Table -->
             <div class="bg-white overflow-hidden shadow-sm sm:rounded-lg">
                 <div class="p-6">
-                    <h3 class="text-lg font-semibold text-gray-900 mb-4">Recent Transactions</h3>
+                    <h3 class="text-lg font-semibold text-gray-900 mb-4">Transacciones Recientes</h3>
                     <div class="overflow-x-auto">
                         <table class="min-w-full divide-y divide-gray-200">
                             <thead class="bg-gray-50">
                                 <tr>
                                     <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                                        Receipt #
+                                        No. Recibo
                                     </th>
                                     <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                                        User
+                                        Usuario
                                     </th>
                                     <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                                        Amount
+                                        Monto
                                     </th>
                                     <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                                        Status
+                                        Estado
                                     </th>
                                     <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                                        Date
+                                        Fecha
                                     </th>
                                     <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                                        Actions
+                                        Acciones
                                     </th>
                                 </tr>
                             </thead>
@@ -89,7 +89,7 @@
                                             @if($transaction->status === 'completed')
                                                 <a href="{{ route('payment.pdf', $transaction) }}" 
                                                    class="text-indigo-600 hover:text-indigo-900">
-                                                    Download PDF
+                                                    Descargar PDF
                                                 </a>
                                             @endif
                                         </td>

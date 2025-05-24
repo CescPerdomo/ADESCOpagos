@@ -1,134 +1,159 @@
-# Sistema de Pagos ADESCO
+# Sistema de Pagos Laravel
 
-Sistema integral de gestión de pagos construido con Laravel, que incluye control de acceso basado en roles, procesamiento de pagos, generación de recibos y una interfaz moderna.
+Sistema de gestión de pagos desarrollado con Laravel, que incluye procesamiento de pagos, generación de recibos PDF y panel de administración.
 
-## Documentación Actualizada
+## Requisitos del Sistema
 
-Se ha agregado documentación detallada a los siguientes componentes:
+- PHP >= 8.1
+- Composer
+- Node.js >= 16.x
+- MySQL >= 8.0
+- Git
 
-### Modelos
-- `User.php`: Gestión de usuarios y autenticación
-- `Role.php`: Sistema de roles y permisos
-- `Transaction.php`: Procesamiento de transacciones
-- `Receipt.php`: Generación y gestión de recibos
+## IDE Recomendado
 
-### Controladores
-- `PaymentController.php`: Gestión de pagos y transacciones
-- `AdminController.php`: Panel de administración y reportes
+Se recomienda usar Visual Studio Code con las siguientes extensiones:
+- PHP Intelephense
+- Laravel Blade Snippets
+- Laravel Snippets
+- Laravel Artisan
+- DotENV
+- EditorConfig
+- Git Lens
 
-### Middleware
-- `AdminMiddleware.php`: Control de acceso administrativo
+## Instalación
 
-### Migraciones
-- `create_roles_table.php`: Estructura de roles
-- `create_role_user_table.php`: Relación usuarios-roles
-- `create_transactions_table.php`: Registro de transacciones
-- `create_receipts_table.php`: Almacenamiento de recibos
-
-### Seeders
-- `RoleSeeder.php`: Inicialización de roles
-- `DatabaseSeeder.php`: Coordinación de seeders
-
-## Puntos de Integración
-
-Cada componente incluye documentación detallada sobre sus puntos de integración:
-
-1. **Modelos**: 
-   - Extensión de funcionalidades
-   - Nuevas relaciones
-   - Métodos personalizados
-   - Eventos y observadores
-
-2. **Controladores**:
-   - Nuevos métodos de pago
-   - Reportes personalizados
-   - Notificaciones
-   - Validaciones adicionales
-
-3. **Middleware**:
-   - Validaciones de seguridad
-   - Logging personalizado
-   - Control de acceso
-   - Auditoría
-
-4. **Migraciones**:
-   - Campos adicionales
-   - Índices personalizados
-   - Relaciones extendidas
-   - Optimizaciones
-
-5. **Seeders**:
-   - Datos iniciales
-   - Configuraciones
-   - Datos de prueba
-   - Perfiles por ambiente
-
-## Guías de Integración
-
-### 1. Agregar Nuevo Método de Pago
-```php
-// En PaymentController.php
-public function procesarNuevoPago(Request $request)
-{
-    // Implementación del nuevo método
-}
+1. Clonar el repositorio:
+```bash
+git clone https://github.com/tu-usuario/laravel-payment-system.git
+cd laravel-payment-system
 ```
 
-### 2. Extender Panel Administrativo
-```php
-// En AdminController.php
-public function nuevoReporte()
-{
-    // Implementación del reporte
-}
+2. Instalar dependencias de PHP:
+```bash
+composer install
 ```
 
-### 3. Agregar Nuevo Rol
-```php
-// En RoleSeeder.php
-$roles[] = [
-    "name" => "nuevo_rol",
-    "description" => "Descripción del nuevo rol"
-];
+3. Instalar dependencias de Node.js:
+```bash
+npm install
 ```
 
-### 4. Personalizar Recibos
-```php
-// En Receipt.php
-public function formatoPersonalizado()
-{
-    // Implementación del formato
-}
+4. Configurar el entorno:
+```bash
+cp .env.example .env
+php artisan key:generate
 ```
 
-## Mejores Prácticas
+5. Configurar la base de datos en el archivo `.env`:
+```
+DB_CONNECTION=mysql
+DB_HOST=127.0.0.1
+DB_PORT=3306
+DB_DATABASE=laravel_payment_system
+DB_USERNAME=tu_usuario
+DB_PASSWORD=tu_contraseña
+```
 
-1. **Código**:
-   - Seguir PSR-12
-   - Documentar métodos
-   - Usar tipos de retorno
-   - Implementar pruebas
+6. Configurar PayPal en el archivo `.env`:
+```
+PAYPAL_CLIENT_ID=tu_client_id
+PAYPAL_CLIENT_SECRET=tu_client_secret
+PAYPAL_CURRENCY=USD
+PAYPAL_MODE=sandbox  # Cambiar a 'live' en producción
+```
 
-2. **Base de Datos**:
-   - Usar migraciones
-   - Documentar relaciones
-   - Optimizar consultas
-   - Mantener índices
+7. Ejecutar las migraciones y seeders:
+```bash
+php artisan migrate --seed
+```
 
-3. **Seguridad**:
-   - Validar entradas
-   - Usar middleware
-   - Implementar CSRF
-   - Sanitizar salidas
+## Ejecución del Proyecto
 
-## Contribuir
+1. Compilar assets:
+```bash
+npm run dev
+```
 
-1. Fork del repositorio
-2. Crear rama de características
-3. Implementar cambios
-4. Documentar modificaciones
-5. Enviar Pull Request
+2. Iniciar el servidor:
+```bash
+php artisan serve
+```
+
+El sistema estará disponible en `http://localhost:8000`
+
+## Características Principales
+
+- Autenticación de usuarios
+- Procesamiento de pagos con PayPal
+- Generación de recibos en PDF
+- Panel de administración
+- Sistema completamente en español
+- Validación de recibos
+- Historial de transacciones
+
+## Estructura del Proyecto
+
+- `app/Models/`: Modelos de la aplicación (Transaction, Receipt, User)
+- `app/Http/Controllers/`: Controladores
+- `resources/views/`: Vistas Blade
+- `database/migrations/`: Migraciones de la base de datos
+- `database/seeders/`: Seeders para datos de prueba
+- `lang/es/`: Archivos de traducción al español
+- `config/`: Archivos de configuración
+
+## Usuarios de Prueba
+
+- Administrador:
+  - Email: admin@example.com
+  - Contraseña: password
+
+- Usuario Regular:
+  - Email: user@example.com
+  - Contraseña: password
+
+## Comandos Útiles
+
+```bash
+# Limpiar caché
+php artisan cache:clear
+php artisan config:clear
+php artisan view:clear
+
+# Ejecutar pruebas
+php artisan test
+
+# Crear un nuevo usuario
+php artisan make:user
+
+# Generar documentación API
+php artisan l5-swagger:generate
+```
+
+## Mantenimiento
+
+Para poner el sistema en modo mantenimiento:
+```bash
+php artisan down
+```
+
+Para volver a activar el sistema:
+```bash
+php artisan up
+```
+
+## Contribución
+
+1. Fork el repositorio
+2. Crear una rama para tu feature (`git checkout -b feature/AmazingFeature`)
+3. Commit tus cambios (`git commit -m 'Add some AmazingFeature'`)
+4. Push a la rama (`git push origin feature/AmazingFeature`)
+5. Abrir un Pull Request
 
 ## Licencia
 
-Este proyecto está licenciado bajo la Licencia MIT.
+Este proyecto está licenciado bajo la Licencia MIT - ver el archivo [LICENSE](LICENSE) para más detalles.
+
+## Soporte
+
+Para soporte, enviar un email a soporte@example.com o crear un issue en el repositorio.

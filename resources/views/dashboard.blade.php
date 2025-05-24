@@ -1,7 +1,7 @@
 <x-app-layout>
     <x-slot name="header">
         <h2 class="font-semibold text-xl text-gray-800 leading-tight">
-            {{ __('Dashboard') }}
+            {{ __('Panel de Control') }}
         </h2>
     </x-slot>
 
@@ -24,19 +24,19 @@
                 </div>
             </div>
 
-            <!-- Receipt Validation Form -->
+            <!-- Formulario de Validación de Recibo -->
             <div class="bg-white overflow-hidden shadow-sm sm:rounded-lg">
                 <div class="p-6">
-                    <h3 class="text-lg font-semibold text-gray-900 mb-4">Validate Receipt</h3>
+                    <h3 class="text-lg font-semibold text-gray-900 mb-4">Validar Recibo</h3>
                     <form id="validateReceiptForm" class="space-y-4">
                         <div>
-                            <label for="receipt_number" class="block text-sm font-medium text-gray-700">Receipt Number</label>
+                            <label for="receipt_number" class="block text-sm font-medium text-gray-700">Número de Recibo</label>
                             <input type="text" name="receipt_number" id="receipt_number" 
                                    class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm"
                                    required maxlength="6" pattern="[0-9]{6}">
                         </div>
                         <div>
-                            <label for="birth_date" class="block text-sm font-medium text-gray-700">Birth Date</label>
+                            <label for="birth_date" class="block text-sm font-medium text-gray-700">Fecha de Nacimiento</label>
                             <input type="date" name="birth_date" id="birth_date" 
                                    class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm"
                                    required>
@@ -44,35 +44,35 @@
                         <div>
                             <button type="submit" 
                                     class="inline-flex justify-center py-2 px-4 border border-transparent shadow-sm text-sm font-medium rounded-md text-white bg-indigo-600 hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500">
-                                Validate Receipt
+                                Validar Recibo
                             </button>
                         </div>
                     </form>
                 </div>
             </div>
 
-            <!-- User's Transactions -->
+            <!-- Transacciones del Usuario -->
             <div class="bg-white overflow-hidden shadow-sm sm:rounded-lg">
                 <div class="p-6">
-                    <h3 class="text-lg font-semibold text-gray-900 mb-4">Your Transactions</h3>
+                    <h3 class="text-lg font-semibold text-gray-900 mb-4">Tus Transacciones</h3>
                     <div class="overflow-x-auto">
                         <table class="min-w-full divide-y divide-gray-200">
                             <thead class="bg-gray-50">
                                 <tr>
                                     <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                                        Receipt #
+                                        No. Recibo
                                     </th>
                                     <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                                        Amount
+                                        Monto
                                     </th>
                                     <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                                        Status
+                                        Estado
                                     </th>
                                     <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                                        Date
+                                        Fecha
                                     </th>
                                     <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                                        Actions
+                                        Acciones
                                     </th>
                                 </tr>
                             </thead>
@@ -101,7 +101,7 @@
                                                 @if($receipt->transaction->status === 'completed')
                                                     <a href="{{ route('payment.pdf', $receipt->transaction) }}" 
                                                        class="text-indigo-600 hover:text-indigo-900">
-                                                        Download PDF
+                                        Descargar PDF
                                                     </a>
                                                 @endif
                                             </td>
@@ -110,7 +110,7 @@
                                 @empty
                                     <tr>
                                         <td colspan="5" class="px-6 py-4 whitespace-nowrap text-sm text-gray-500 text-center">
-                                            No transactions found.
+                                            No se encontraron transacciones.
                                         </td>
                                     </tr>
                                 @endforelse
