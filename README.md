@@ -60,134 +60,130 @@ npm run dev
 php artisan serve
 ```
 
+## Puntos de Integración
+
+### 1. Sistema de Pagos
+Ubicación: `app/Http/Controllers/PaymentController.php`
+
+Puedes integrar:
+- Nuevos métodos de pago
+- Pasarelas de pago adicionales
+- Sistemas de facturación
+- Procesadores de transacciones personalizados
+
+Ejemplo:
+```php
+// Agregar nuevo método de pago
+public function procesarPagoPersonalizado(Request $request)
+{
+    // Tu implementación aquí
+}
+```
+
+### 2. Panel de Administración
+Ubicación: `app/Http/Controllers/AdminController.php`
+
+Áreas de extensión:
+- Nuevos widgets para el dashboard
+- Reportes personalizados
+- Herramientas de análisis
+- Gestión de usuarios extendida
+
+### 3. Gestión de Usuarios
+Ubicación: `app/Models/User.php`
+
+Puntos de extensión:
+- Campos de perfil adicionales
+- Nuevos roles y permisos
+- Integraciones con servicios externos
+- Sistema de notificaciones personalizado
+
+### 4. Interfaz de Usuario
+Ubicación: `resources/views/components/`
+
+Componentes personalizables:
+- Nuevos componentes Blade
+- Temas personalizados
+- Layouts adicionales
+- Elementos de interfaz específicos
+
+### 5. API y Webhooks
+Ubicación: `routes/api.php`
+
+Integraciones posibles:
+- Endpoints para servicios externos
+- Webhooks para notificaciones
+- APIs para aplicaciones móviles
+- Integraciones con otros sistemas
+
 ## Estructura del Proyecto
 
-### Directorios Principales
+### Directorios Principales y Sus Usos
 
 ```
 ├── app/
 │   ├── Http/
-│   │   ├── Controllers/    # Controladores de la aplicación
-│   │   ├── Middleware/     # Middleware personalizado
-│   │   └── Requests/       # Solicitudes de formularios y validación
-│   └── Models/            # Modelos Eloquent
+│   │   ├── Controllers/    # Controladores - Agregar nueva lógica de negocio
+│   │   ├── Middleware/     # Middleware - Implementar nuevas validaciones
+│   │   └── Requests/       # Requests - Agregar validaciones personalizadas
+│   └── Models/            # Modelos - Extender funcionalidades de datos
 ├── database/
-│   ├── migrations/        # Migraciones de base de datos
-│   └── seeders/          # Sembradores de base de datos
+│   ├── migrations/        # Migraciones - Agregar nuevas tablas
+│   └── seeders/          # Seeders - Datos de prueba personalizados
 ├── resources/
-│   ├── css/              # Hojas de estilo
-│   ├── js/               # Archivos JavaScript
-│   └── views/            # Plantillas Blade
-│       ├── admin/        # Vistas del panel de administración
-│       ├── components/   # Componentes UI reutilizables
-│       └── layouts/      # Plantillas de diseño
+│   ├── css/              # Estilos - Personalización visual
+│   ├── js/               # JavaScript - Funcionalidades frontend
+│   └── views/            # Vistas - Nuevas interfaces y componentes
 └── routes/
-    └── web.php          # Rutas web
+    └── web.php          # Rutas - Agregar nuevos endpoints
 ```
 
-### Características Principales
+## Guías de Integración
 
-1. **Sistema de Autenticación**
-   - Registro y inicio de sesión de usuarios
-   - Funcionalidad de restablecimiento de contraseña
-   - Verificación de correo electrónico
+### 1. Agregar Nuevo Método de Pago
 
-2. **Control de Acceso Basado en Roles**
-   - Roles de Administrador y Usuario
-   - Rutas protegidas y middleware
-   - Paneles específicos por rol
-
-3. **Gestión de Pagos**
-   - Procesamiento de pagos
-   - Historial de transacciones
-   - Generación de recibos (PDF)
-
-4. **Componentes de UI**
-   - Diseño moderno y responsivo
-   - Soporte para modo oscuro
-   - Componentes Blade reutilizables:
-     - Formularios y campos
-     - Botones
-     - Tarjetas
-     - Modales
-     - Tablas
-     - Alertas
-     - Insignias
-     - Indicadores de carga
-
-## Rutas Disponibles
-
-- `/` - Página de bienvenida
-- `/login` - Inicio de sesión
-- `/register` - Registro de usuario
-- `/dashboard` - Panel de usuario
-- `/admin/dashboard` - Panel de administrador
-- `/profile` - Gestión de perfil
-
-## Esquema de Base de Datos
-
-### Tabla Users (Usuarios)
-- id (clave primaria)
-- name (nombre)
-- email (correo)
-- password (contraseña)
-- created_at
-- updated_at
-
-### Tabla Roles
-- id (clave primaria)
-- name (nombre)
-- created_at
-- updated_at
-
-### Tabla Transactions (Transacciones)
-- id (clave primaria)
-- user_id (clave foránea)
-- amount (monto)
-- description (descripción)
-- status (estado)
-- created_at
-- updated_at
-
-### Tabla Receipts (Recibos)
-- id (clave primaria)
-- transaction_id (clave foránea)
-- receipt_number (número de recibo)
-- created_at
-- updated_at
-
-## Seguridad
-
-- Protección CSRF habilitada
-- Prevención de inyección SQL
-- Protección XSS
-- Hash seguro de contraseñas
-- Limitación de tasa en rutas de autenticación
-
-## Desarrollo
-
-### Agregar Nuevas Funcionalidades
-
-1. Crear migraciones necesarias:
+1. Crear el controlador:
 ```bash
-php artisan make:migration crear_nombre_de_tu_tabla
+php artisan make:controller NuevoPagoController
 ```
 
-2. Crear modelos:
-```bash
-php artisan make:model TuModelo
-```
+2. Implementar la lógica de pago
+3. Agregar rutas en `routes/web.php`
+4. Crear vistas necesarias
 
-3. Crear controladores:
-```bash
-php artisan make:controller TuControlador
-```
+### 2. Extender el Panel de Administración
 
-### Ejecutar Pruebas
+1. Crear nuevos componentes en `resources/views/components/`
+2. Agregar rutas en el grupo admin
+3. Implementar lógica en AdminController
+4. Actualizar permisos si es necesario
 
-```bash
-php artisan test
-```
+### 3. Agregar Nuevos Reportes
+
+1. Crear nueva clase de reporte
+2. Implementar lógica de generación
+3. Agregar rutas de descarga
+4. Integrar en el panel admin
+
+## Mejores Prácticas
+
+1. **Código**
+   - Seguir PSR-12
+   - Documentar métodos nuevos
+   - Usar tipos de retorno
+   - Implementar pruebas
+
+2. **Base de Datos**
+   - Usar migraciones para cambios
+   - Documentar relaciones
+   - Optimizar consultas
+   - Mantener índices
+
+3. **Seguridad**
+   - Validar todas las entradas
+   - Usar middleware de autenticación
+   - Implementar CSRF
+   - Sanitizar salidas
 
 ## Solución de Problemas
 
@@ -213,10 +209,18 @@ php artisan view:clear
 ## Contribuir
 
 1. Haz un fork del repositorio
-2. Crea tu rama de características (`git checkout -b feature/caracteristica-asombrosa`)
-3. Haz commit de tus cambios (`git commit -m 'Agregar alguna característica asombrosa'`)
-4. Haz push a la rama (`git push origin feature/caracteristica-asombrosa`)
+2. Crea tu rama de características
+3. Haz commit de tus cambios
+4. Asegúrate de que las pruebas pasen
 5. Abre un Pull Request
+
+### Proceso de Pull Request
+
+1. Actualiza tu fork
+2. Crea una rama descriptiva
+3. Implementa tus cambios
+4. Documenta las modificaciones
+5. Envía el PR
 
 ## Licencia
 
