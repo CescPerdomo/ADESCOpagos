@@ -6,9 +6,26 @@
     </x-slot>
 
     <div class="py-12">
-        <div class="max-w-7xl mx-auto sm:px-6 lg:px-8">
+        <div class="max-w-7xl mx-auto sm:px-6 lg:px-8 space-y-6">
+            <!-- Sección de Pagos -->
+            <div class="bg-white overflow-hidden shadow-sm sm:rounded-lg">
+                <div class="p-6">
+                    <h2 class="text-2xl font-semibold text-gray-800 mb-4">
+                        {{ __("Realizar Pago") }}
+                    </h2>
+                    <p class="text-gray-600 mb-4">
+                        {{ __("Realiza pagos de forma segura utilizando PayPal.") }}
+                    </p>
+                    <div class="mt-4">
+                        <x-primary-button onclick="window.location.href='{{ route('payment.form') }}'">
+                            {{ __("Realizar Pago") }}
+                        </x-primary-button>
+                    </div>
+                </div>
+            </div>
+
             <!-- Receipt Validation Form -->
-            <div class="bg-white overflow-hidden shadow-sm sm:rounded-lg mb-6">
+            <div class="bg-white overflow-hidden shadow-sm sm:rounded-lg">
                 <div class="p-6">
                     <h3 class="text-lg font-semibold text-gray-900 mb-4">Validate Receipt</h3>
                     <form id="validateReceiptForm" class="space-y-4">

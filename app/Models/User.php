@@ -7,6 +7,17 @@ use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
 
+/**
+ * Modelo de Usuario
+ * 
+ * Este modelo representa a los usuarios del sistema y gestiona la autenticación.
+ * Puede ser extendido para agregar funcionalidades adicionales de usuario.
+ * 
+ * Puntos de Integración:
+ * - Agregar nuevos campos en la migración correspondiente
+ * - Extender las relaciones para nuevas funcionalidades
+ * - Implementar nuevos métodos para lógica específica de usuario
+ */
 class User extends Authenticatable
 {
     /** @use HasFactory<\Database\Factories\UserFactory> */

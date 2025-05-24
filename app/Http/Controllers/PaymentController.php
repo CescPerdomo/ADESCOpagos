@@ -27,6 +27,22 @@ class PaymentController extends Controller
             config("services.paypal.secret")
         );
         $this->client = new PayPalHttpClient($environment);
+
+        // Aplicar middleware de autenticación
+        $this->middleware('auth');
+    }
+
+    /**
+     * Muestra el dashboard con las transacciones del usuario.
+     */
+    public function dashboard()
+    {
+        $transactions = Transaction::with('receipt')
+            ->where('user_id', auth()->id())
+            ->latest()
+            ->paginate(10);
+
+        return view('dashboard', compact('transactions'));
     }
 
     /**
