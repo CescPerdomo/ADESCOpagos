@@ -1,226 +1,133 @@
 # Sistema de Pagos ADESCO
 
-Un sistema integral de gestión de pagos construido con Laravel, que incluye control de acceso basado en roles, procesamiento de pagos, generación de recibos y una interfaz moderna con soporte para modo oscuro.
+Sistema integral de gestión de pagos construido con Laravel, que incluye control de acceso basado en roles, procesamiento de pagos, generación de recibos y una interfaz moderna.
 
-## Requisitos
+## Documentación Actualizada
 
-- PHP >= 8.1
-- Composer
-- Node.js >= 16.x
-- MySQL >= 8.0
-- Git
+Se ha agregado documentación detallada a los siguientes componentes:
 
-## Instalación
+### Modelos
+- `User.php`: Gestión de usuarios y autenticación
+- `Role.php`: Sistema de roles y permisos
+- `Transaction.php`: Procesamiento de transacciones
+- `Receipt.php`: Generación y gestión de recibos
 
-1. Clonar el repositorio:
-```bash
-git clone https://github.com/CescPerdomo/ADESCOpagos.git
-cd ADESCOpagos
-```
+### Controladores
+- `PaymentController.php`: Gestión de pagos y transacciones
+- `AdminController.php`: Panel de administración y reportes
 
-2. Instalar dependencias PHP:
-```bash
-composer install
-```
+### Middleware
+- `AdminMiddleware.php`: Control de acceso administrativo
 
-3. Instalar dependencias JavaScript:
-```bash
-npm install
-```
+### Migraciones
+- `create_roles_table.php`: Estructura de roles
+- `create_role_user_table.php`: Relación usuarios-roles
+- `create_transactions_table.php`: Registro de transacciones
+- `create_receipts_table.php`: Almacenamiento de recibos
 
-4. Configuración del entorno:
-```bash
-cp .env.example .env
-php artisan key:generate
-```
-
-5. Configurar el archivo `.env` con tus credenciales de base de datos:
-```env
-DB_CONNECTION=mysql
-DB_HOST=127.0.0.1
-DB_PORT=3306
-DB_DATABASE=nombre_de_tu_base_de_datos
-DB_USERNAME=tu_usuario
-DB_PASSWORD=tu_contraseña
-```
-
-6. Ejecutar migraciones y sembrar la base de datos:
-```bash
-php artisan migrate
-php artisan db:seed
-```
-
-7. Compilar assets:
-```bash
-npm run dev
-```
-
-8. Iniciar el servidor de desarrollo:
-```bash
-php artisan serve
-```
+### Seeders
+- `RoleSeeder.php`: Inicialización de roles
+- `DatabaseSeeder.php`: Coordinación de seeders
 
 ## Puntos de Integración
 
-### 1. Sistema de Pagos
-Ubicación: `app/Http/Controllers/PaymentController.php`
+Cada componente incluye documentación detallada sobre sus puntos de integración:
 
-Puedes integrar:
-- Nuevos métodos de pago
-- Pasarelas de pago adicionales
-- Sistemas de facturación
-- Procesadores de transacciones personalizados
+1. **Modelos**: 
+   - Extensión de funcionalidades
+   - Nuevas relaciones
+   - Métodos personalizados
+   - Eventos y observadores
 
-Ejemplo:
-```php
-// Agregar nuevo método de pago
-public function procesarPagoPersonalizado(Request $request)
-{
-    // Tu implementación aquí
-}
-```
+2. **Controladores**:
+   - Nuevos métodos de pago
+   - Reportes personalizados
+   - Notificaciones
+   - Validaciones adicionales
 
-### 2. Panel de Administración
-Ubicación: `app/Http/Controllers/AdminController.php`
+3. **Middleware**:
+   - Validaciones de seguridad
+   - Logging personalizado
+   - Control de acceso
+   - Auditoría
 
-Áreas de extensión:
-- Nuevos widgets para el dashboard
-- Reportes personalizados
-- Herramientas de análisis
-- Gestión de usuarios extendida
+4. **Migraciones**:
+   - Campos adicionales
+   - Índices personalizados
+   - Relaciones extendidas
+   - Optimizaciones
 
-### 3. Gestión de Usuarios
-Ubicación: `app/Models/User.php`
-
-Puntos de extensión:
-- Campos de perfil adicionales
-- Nuevos roles y permisos
-- Integraciones con servicios externos
-- Sistema de notificaciones personalizado
-
-### 4. Interfaz de Usuario
-Ubicación: `resources/views/components/`
-
-Componentes personalizables:
-- Nuevos componentes Blade
-- Temas personalizados
-- Layouts adicionales
-- Elementos de interfaz específicos
-
-### 5. API y Webhooks
-Ubicación: `routes/api.php`
-
-Integraciones posibles:
-- Endpoints para servicios externos
-- Webhooks para notificaciones
-- APIs para aplicaciones móviles
-- Integraciones con otros sistemas
-
-## Estructura del Proyecto
-
-### Directorios Principales y Sus Usos
-
-```
-├── app/
-│   ├── Http/
-│   │   ├── Controllers/    # Controladores - Agregar nueva lógica de negocio
-│   │   ├── Middleware/     # Middleware - Implementar nuevas validaciones
-│   │   └── Requests/       # Requests - Agregar validaciones personalizadas
-│   └── Models/            # Modelos - Extender funcionalidades de datos
-├── database/
-│   ├── migrations/        # Migraciones - Agregar nuevas tablas
-│   └── seeders/          # Seeders - Datos de prueba personalizados
-├── resources/
-│   ├── css/              # Estilos - Personalización visual
-│   ├── js/               # JavaScript - Funcionalidades frontend
-│   └── views/            # Vistas - Nuevas interfaces y componentes
-└── routes/
-    └── web.php          # Rutas - Agregar nuevos endpoints
-```
+5. **Seeders**:
+   - Datos iniciales
+   - Configuraciones
+   - Datos de prueba
+   - Perfiles por ambiente
 
 ## Guías de Integración
 
 ### 1. Agregar Nuevo Método de Pago
-
-1. Crear el controlador:
-```bash
-php artisan make:controller NuevoPagoController
+```php
+// En PaymentController.php
+public function procesarNuevoPago(Request $request)
+{
+    // Implementación del nuevo método
+}
 ```
 
-2. Implementar la lógica de pago
-3. Agregar rutas en `routes/web.php`
-4. Crear vistas necesarias
+### 2. Extender Panel Administrativo
+```php
+// En AdminController.php
+public function nuevoReporte()
+{
+    // Implementación del reporte
+}
+```
 
-### 2. Extender el Panel de Administración
+### 3. Agregar Nuevo Rol
+```php
+// En RoleSeeder.php
+$roles[] = [
+    "name" => "nuevo_rol",
+    "description" => "Descripción del nuevo rol"
+];
+```
 
-1. Crear nuevos componentes en `resources/views/components/`
-2. Agregar rutas en el grupo admin
-3. Implementar lógica en AdminController
-4. Actualizar permisos si es necesario
-
-### 3. Agregar Nuevos Reportes
-
-1. Crear nueva clase de reporte
-2. Implementar lógica de generación
-3. Agregar rutas de descarga
-4. Integrar en el panel admin
+### 4. Personalizar Recibos
+```php
+// En Receipt.php
+public function formatoPersonalizado()
+{
+    // Implementación del formato
+}
+```
 
 ## Mejores Prácticas
 
-1. **Código**
+1. **Código**:
    - Seguir PSR-12
-   - Documentar métodos nuevos
+   - Documentar métodos
    - Usar tipos de retorno
    - Implementar pruebas
 
-2. **Base de Datos**
-   - Usar migraciones para cambios
+2. **Base de Datos**:
+   - Usar migraciones
    - Documentar relaciones
    - Optimizar consultas
    - Mantener índices
 
-3. **Seguridad**
-   - Validar todas las entradas
-   - Usar middleware de autenticación
+3. **Seguridad**:
+   - Validar entradas
+   - Usar middleware
    - Implementar CSRF
    - Sanitizar salidas
 
-## Solución de Problemas
-
-### Problemas Comunes
-
-1. **Dependencias de Composer**
-```bash
-composer dump-autoload
-```
-
-2. **Problemas de Base de Datos**
-```bash
-php artisan migrate:fresh --seed
-```
-
-3. **Problemas de Caché**
-```bash
-php artisan config:clear
-php artisan cache:clear
-php artisan view:clear
-```
-
 ## Contribuir
 
-1. Haz un fork del repositorio
-2. Crea tu rama de características
-3. Haz commit de tus cambios
-4. Asegúrate de que las pruebas pasen
-5. Abre un Pull Request
-
-### Proceso de Pull Request
-
-1. Actualiza tu fork
-2. Crea una rama descriptiva
-3. Implementa tus cambios
-4. Documenta las modificaciones
-5. Envía el PR
+1. Fork del repositorio
+2. Crear rama de características
+3. Implementar cambios
+4. Documentar modificaciones
+5. Enviar Pull Request
 
 ## Licencia
 
