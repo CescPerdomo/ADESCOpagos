@@ -6,6 +6,7 @@ use App\Models\Transaction;
 use App\Models\Receipt;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Log;
+use Illuminate\Support\Facades\Storage;
 use PayPalHttp\HttpException;
 use PayPalCheckoutSdk\Core\PayPalHttpClient;
 use PayPalCheckoutSdk\Core\SandboxEnvironment;
@@ -129,5 +130,31 @@ class PaymentController extends Controller
     {
         return redirect()->route("dashboard")
             ->with("error", "El pago ha sido cancelado");
+    }
+
+    /**
+     * Descarga el recibo en formato PDF.
+     */
+    public function downloadReceipt(Receipt $receipt)
+    {
+        // Verificar que el usuario tenga acceso al recibo
+        if ($receipt->transaction->user_id !== auth()->id() && !auth()->user()->hasRole("admin")) {
+            abort(403, "No tienes permiso para descargar este recibo");
+        }
+
+        // Verificar que el archivo exista
+        $pdfPath = "receipts/{$receipt->receipt_number}.pdf";
+        if (!Storage::exists($pdfPath)) {
+            // Si no existe, intentar generarlo
+            $receipt->generatePDF();
+            
+            if (!Storage::exists($pdfPath)) {
+                abort(404, "El archivo del recibo no se encuentra disponible");
+            }
+        }
+
+        return Storage::download($pdfPath, "recibo-{$receipt->receipt_number}.pdf", [
+            "Content-Type" => "application/pdf"
+        ]);
     }
 }
