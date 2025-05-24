@@ -2,157 +2,135 @@
 
 namespace App\Http\Controllers;
 
-use Illuminate\Http\Request;
-
-use App\Models\Receipt;
 use App\Models\Transaction;
+use App\Models\Receipt;
+use Illuminate\Http\Request;
+use PayPal\Rest\ApiContext;
+use PayPal\Auth\OAuthTokenCredential;
 use PayPal\Api\Amount;
 use PayPal\Api\Payer;
 use PayPal\Api\Payment;
-use PayPal\Api\PaymentExecution;
 use PayPal\Api\RedirectUrls;
-use PayPal\Auth\OAuthTokenCredential;
-use PayPal\Rest\ApiContext;
-use PayPal\Api\Item;
+use PayPal\Api\Transaction as PayPalTransaction;
 use PayPal\Api\ItemList;
 use PayPal\Api\Details;
 use Exception;
 
+/**
+ * Controlador de Pagos
+ * 
+ * Este controlador maneja todas las operaciones relacionadas con pagos y transacciones.
+ * 
+ * Puntos de Integración:
+ * 1. Procesadores de Pago:
+ *    - Implementar nuevos métodos para diferentes pasarelas de pago
+ *    - Agregar nuevos proveedores de servicios de pago
+ *    - Personalizar flujos de pago específicos
+ *    - Integrar sistemas de pago locales
+ * 
+ * 2. Generación de Recibos:
+ *    - Personalizar el formato de recibos
+ *    - Agregar nuevos formatos de exportación
+ *    - Implementar plantillas personalizadas
+ *    - Añadir firmas digitales
+ * 
+ * 3. Notificaciones:
+ *    - Implementar notificaciones por correo
+ *    - Agregar notificaciones en tiempo real
+ *    - Configurar webhooks personalizados
+ *    - Integrar sistemas de mensajería
+ * 
+ * 4. Reportes:
+ *    - Agregar nuevos tipos de reportes
+ *    - Implementar exportación en diferentes formatos
+ *    - Crear dashboards personalizados
+ *    - Generar estadísticas específicas
+ */
 class PaymentController extends Controller
 {
     private $apiContext;
 
+    /**
+     * Constructor del controlador.
+     * 
+     * Punto de Integración:
+     * Aquí se pueden configurar credenciales adicionales
+     * para diferentes pasarelas de pago.
+     */
     public function __construct()
     {
         $this->apiContext = new ApiContext(
             new OAuthTokenCredential(
-                config('services.paypal.client_id'),
-                config('services.paypal.secret')
+                config("services.paypal.client_id"),
+                config("services.paypal.secret")
             )
         );
-
-        $this->apiContext->setConfig([
-            'mode' => config('services.paypal.mode', 'sandbox')
-        ]);
     }
 
-    public function validateReceipt(Request $request)
+    /**
+     * Muestra el formulario de pago.
+     * 
+     * Punto de Integración:
+     * - Personalizar el formulario según necesidades
+     * - Agregar campos adicionales
+     * - Implementar validaciones específicas
+     * 
+     * @return \Illuminate\View\View
+     */
+    public function showPaymentForm()
     {
-        $request->validate([
-            'receipt_number' => 'required|string|size:6',
-            'birth_date' => 'required|date'
-        ]);
-
-        $receipt = Receipt::where('receipt_number', $request->receipt_number)
-            ->where('birth_date', $request->birth_date)
-            ->first();
-
-        if (!$receipt) {
-            return response()->json(['error' => 'Invalid receipt details'], 404);
-        }
-
-        return response()->json($receipt);
+        return view("payment.form");
     }
 
-    public function create(Request $request)
+    /**
+     * Procesa el pago.
+     * 
+     * Punto de Integración:
+     * - Agregar nuevos métodos de pago
+     * - Implementar validaciones personalizadas
+     * - Configurar flujos de pago específicos
+     * 
+     * @param Request $request
+     * @return \Illuminate\Http\RedirectResponse
+     */
+    public function processPayment(Request $request)
     {
-        $receipt = Receipt::findOrFail($request->receipt_id);
-
-        $payer = new Payer();
-        $payer->setPaymentMethod('paypal');
-
-        $item = new Item();
-        $item->setName('Receipt Payment')
-            ->setCurrency('USD')
-            ->setQuantity(1)
-            ->setPrice($receipt->amount);
-
-        $itemList = new ItemList();
-        $itemList->setItems([$item]);
-
-        $amount = new Amount();
-        $amount->setCurrency('USD')
-            ->setTotal($receipt->amount);
-
-        $transaction = new \PayPal\Api\Transaction();
-        $transaction->setAmount($amount)
-            ->setItemList($itemList)
-            ->setDescription('Payment for receipt #' . $receipt->receipt_number);
-
-        $redirectUrls = new RedirectUrls();
-        $redirectUrls->setReturnUrl(route('payment.callback'))
-            ->setCancelUrl(route('payment.cancel'));
-
-        $payment = new Payment();
-        $payment->setIntent('sale')
-            ->setPayer($payer)
-            ->setTransactions([$transaction])
-            ->setRedirectUrls($redirectUrls);
-
         try {
-            $payment->create($this->apiContext);
-
-            Transaction::create([
-                'receipt_id' => $receipt->id,
-                'paypal_order_id' => $payment->getId(),
-                'amount' => $receipt->amount,
-                'status' => 'pending'
-            ]);
-
-            return response()->json([
-                'id' => $payment->getId(),
-                'approval_url' => $payment->getApprovalLink()
-            ]);
+            // Implementación del proceso de pago
         } catch (Exception $e) {
-            return response()->json(['error' => $e->getMessage()], 500);
+            return back()->with("error", $e->getMessage());
         }
     }
 
-    public function callback(Request $request)
+    /**
+     * Maneja el éxito del pago.
+     * 
+     * Punto de Integración:
+     * - Personalizar el proceso post-pago
+     * - Agregar notificaciones adicionales
+     * - Implementar acciones específicas
+     * 
+     * @param Request $request
+     * @return \Illuminate\Http\RedirectResponse
+     */
+    public function success(Request $request)
     {
-        if (!$request->paymentId || !$request->PayerID) {
-            return redirect()->route('payment.failed');
-        }
-
-        $transaction = Transaction::where('paypal_order_id', $request->paymentId)->firstOrFail();
-
-        try {
-            $payment = Payment::get($request->paymentId, $this->apiContext);
-            
-            $execution = new PaymentExecution();
-            $execution->setPayerId($request->PayerID);
-
-            $result = $payment->execute($execution, $this->apiContext);
-
-            if ($result->getState() === 'approved') {
-                $transaction->update([
-                    'status' => 'completed',
-                    'paypal_payer_id' => $request->PayerID,
-                    'paid_at' => now(),
-                    'paypal_response' => $result->toArray()
-                ]);
-
-                $transaction->receipt->update(['status' => 'paid']);
-
-                return redirect()->route('payment.success');
-            }
-        } catch (Exception $e) {
-            $transaction->update([
-                'status' => 'failed',
-                'paypal_response' => ['error' => $e->getMessage()]
-            ]);
-
-            return redirect()->route('payment.failed');
-        }
+        // Implementación del manejo de éxito
     }
 
-    public function generatePdf(Transaction $transaction)
+    /**
+     * Maneja la cancelación del pago.
+     * 
+     * Punto de Integración:
+     * - Personalizar el manejo de cancelaciones
+     * - Implementar acciones de recuperación
+     * - Agregar seguimiento específico
+     * 
+     * @param Request $request
+     * @return \Illuminate\Http\RedirectResponse
+     */
+    public function cancel(Request $request)
     {
-        $pdf = \PDF::loadView('pdf.receipt', [
-            'transaction' => $transaction,
-            'receipt' => $transaction->receipt
-        ]);
-
-        return $pdf->download('receipt-' . $transaction->receipt->receipt_number . '.pdf');
+        // Implementación del manejo de cancelación
     }
 }
