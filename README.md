@@ -1,4 +1,4 @@
-# Sistema de Pagos Laravel
+# Sistema de Pagos ADESCO PHP+Laravel
 
 Sistema de gestión de pagos desarrollado con Laravel, que incluye procesamiento de pagos, generación de recibos PDF y panel de administración.
 
