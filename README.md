@@ -1,8 +1,8 @@
-# ADESCO Payment System
+# Sistema de Pagos ADESCO
 
-A comprehensive payment management system built with Laravel, featuring role-based access control, payment processing, receipt generation, and a modern UI with dark mode support.
+Un sistema integral de gestión de pagos construido con Laravel, que incluye control de acceso basado en roles, procesamiento de pagos, generación de recibos y una interfaz moderna con soporte para modo oscuro.
 
-## Requirements
+## Requisitos
 
 - PHP >= 8.1
 - Composer
@@ -10,214 +10,214 @@ A comprehensive payment management system built with Laravel, featuring role-bas
 - MySQL >= 8.0
 - Git
 
-## Installation
+## Instalación
 
-1. Clone the repository:
+1. Clonar el repositorio:
 ```bash
 git clone https://github.com/CescPerdomo/ADESCOpagos.git
 cd ADESCOpagos
 ```
 
-2. Install PHP dependencies:
+2. Instalar dependencias PHP:
 ```bash
 composer install
 ```
 
-3. Install JavaScript dependencies:
+3. Instalar dependencias JavaScript:
 ```bash
 npm install
 ```
 
-4. Environment Setup:
+4. Configuración del entorno:
 ```bash
 cp .env.example .env
 php artisan key:generate
 ```
 
-5. Configure your `.env` file with your database credentials:
+5. Configurar el archivo `.env` con tus credenciales de base de datos:
 ```env
 DB_CONNECTION=mysql
 DB_HOST=127.0.0.1
 DB_PORT=3306
-DB_DATABASE=your_database_name
-DB_USERNAME=your_database_user
-DB_PASSWORD=your_database_password
+DB_DATABASE=nombre_de_tu_base_de_datos
+DB_USERNAME=tu_usuario
+DB_PASSWORD=tu_contraseña
 ```
 
-6. Run migrations and seed the database:
+6. Ejecutar migraciones y sembrar la base de datos:
 ```bash
 php artisan migrate
 php artisan db:seed
 ```
 
-7. Build assets:
+7. Compilar assets:
 ```bash
 npm run dev
 ```
 
-8. Start the development server:
+8. Iniciar el servidor de desarrollo:
 ```bash
 php artisan serve
 ```
 
-## Project Structure
+## Estructura del Proyecto
 
-### Key Directories
+### Directorios Principales
 
 ```
 ├── app/
 │   ├── Http/
-│   │   ├── Controllers/    # Application controllers
-│   │   ├── Middleware/     # Custom middleware
-│   │   └── Requests/       # Form requests and validation
-│   └── Models/            # Eloquent models
+│   │   ├── Controllers/    # Controladores de la aplicación
+│   │   ├── Middleware/     # Middleware personalizado
+│   │   └── Requests/       # Solicitudes de formularios y validación
+│   └── Models/            # Modelos Eloquent
 ├── database/
-│   ├── migrations/        # Database migrations
-│   └── seeders/          # Database seeders
+│   ├── migrations/        # Migraciones de base de datos
+│   └── seeders/          # Sembradores de base de datos
 ├── resources/
-│   ├── css/              # Stylesheets
-│   ├── js/               # JavaScript files
-│   └── views/            # Blade templates
-│       ├── admin/        # Admin panel views
-│       ├── components/   # Reusable UI components
-│       └── layouts/      # Layout templates
+│   ├── css/              # Hojas de estilo
+│   ├── js/               # Archivos JavaScript
+│   └── views/            # Plantillas Blade
+│       ├── admin/        # Vistas del panel de administración
+│       ├── components/   # Componentes UI reutilizables
+│       └── layouts/      # Plantillas de diseño
 └── routes/
-    └── web.php          # Web routes
+    └── web.php          # Rutas web
 ```
 
-### Key Features
+### Características Principales
 
-1. **Authentication System**
-   - User registration and login
-   - Password reset functionality
-   - Email verification
+1. **Sistema de Autenticación**
+   - Registro y inicio de sesión de usuarios
+   - Funcionalidad de restablecimiento de contraseña
+   - Verificación de correo electrónico
 
-2. **Role-Based Access Control**
-   - Admin and User roles
-   - Protected routes and middleware
-   - Role-specific dashboards
+2. **Control de Acceso Basado en Roles**
+   - Roles de Administrador y Usuario
+   - Rutas protegidas y middleware
+   - Paneles específicos por rol
 
-3. **Payment Management**
-   - Payment processing
-   - Transaction history
-   - Receipt generation (PDF)
+3. **Gestión de Pagos**
+   - Procesamiento de pagos
+   - Historial de transacciones
+   - Generación de recibos (PDF)
 
-4. **UI Components**
-   - Modern, responsive design
-   - Dark mode support
-   - Reusable Blade components:
-     - Forms and inputs
-     - Buttons
-     - Cards
-     - Modals
-     - Tables
-     - Alerts
-     - Badges
-     - Loading spinners
+4. **Componentes de UI**
+   - Diseño moderno y responsivo
+   - Soporte para modo oscuro
+   - Componentes Blade reutilizables:
+     - Formularios y campos
+     - Botones
+     - Tarjetas
+     - Modales
+     - Tablas
+     - Alertas
+     - Insignias
+     - Indicadores de carga
 
-## Available Routes
+## Rutas Disponibles
 
-- `/` - Welcome page
-- `/login` - User login
-- `/register` - User registration
-- `/dashboard` - User dashboard
-- `/admin/dashboard` - Admin dashboard
-- `/profile` - User profile management
+- `/` - Página de bienvenida
+- `/login` - Inicio de sesión
+- `/register` - Registro de usuario
+- `/dashboard` - Panel de usuario
+- `/admin/dashboard` - Panel de administrador
+- `/profile` - Gestión de perfil
 
-## Database Schema
+## Esquema de Base de Datos
 
-### Users Table
-- id (primary key)
-- name
-- email
-- password
+### Tabla Users (Usuarios)
+- id (clave primaria)
+- name (nombre)
+- email (correo)
+- password (contraseña)
 - created_at
 - updated_at
 
-### Roles Table
-- id (primary key)
-- name
+### Tabla Roles
+- id (clave primaria)
+- name (nombre)
 - created_at
 - updated_at
 
-### Transactions Table
-- id (primary key)
-- user_id (foreign key)
-- amount
-- description
-- status
+### Tabla Transactions (Transacciones)
+- id (clave primaria)
+- user_id (clave foránea)
+- amount (monto)
+- description (descripción)
+- status (estado)
 - created_at
 - updated_at
 
-### Receipts Table
-- id (primary key)
-- transaction_id (foreign key)
-- receipt_number
+### Tabla Receipts (Recibos)
+- id (clave primaria)
+- transaction_id (clave foránea)
+- receipt_number (número de recibo)
 - created_at
 - updated_at
 
-## Security
+## Seguridad
 
-- CSRF protection enabled
-- SQL injection prevention
-- XSS protection
-- Secure password hashing
-- Rate limiting on authentication routes
+- Protección CSRF habilitada
+- Prevención de inyección SQL
+- Protección XSS
+- Hash seguro de contraseñas
+- Limitación de tasa en rutas de autenticación
 
-## Development
+## Desarrollo
 
-### Adding New Features
+### Agregar Nuevas Funcionalidades
 
-1. Create necessary migrations:
+1. Crear migraciones necesarias:
 ```bash
-php artisan make:migration create_your_table_name
+php artisan make:migration crear_nombre_de_tu_tabla
 ```
 
-2. Create models:
+2. Crear modelos:
 ```bash
-php artisan make:model YourModel
+php artisan make:model TuModelo
 ```
 
-3. Create controllers:
+3. Crear controladores:
 ```bash
-php artisan make:controller YourController
+php artisan make:controller TuControlador
 ```
 
-### Running Tests
+### Ejecutar Pruebas
 
 ```bash
 php artisan test
 ```
 
-## Troubleshooting
+## Solución de Problemas
 
-### Common Issues
+### Problemas Comunes
 
-1. **Composer Dependencies**
+1. **Dependencias de Composer**
 ```bash
 composer dump-autoload
 ```
 
-2. **Database Issues**
+2. **Problemas de Base de Datos**
 ```bash
 php artisan migrate:fresh --seed
 ```
 
-3. **Cache Issues**
+3. **Problemas de Caché**
 ```bash
 php artisan config:clear
 php artisan cache:clear
 php artisan view:clear
 ```
 
-## Contributing
+## Contribuir
 
-1. Fork the repository
-2. Create your feature branch (`git checkout -b feature/amazing-feature`)
-3. Commit your changes (`git commit -m 'Add some amazing feature'`)
-4. Push to the branch (`git push origin feature/amazing-feature`)
-5. Open a Pull Request
+1. Haz un fork del repositorio
+2. Crea tu rama de características (`git checkout -b feature/caracteristica-asombrosa`)
+3. Haz commit de tus cambios (`git commit -m 'Agregar alguna característica asombrosa'`)
+4. Haz push a la rama (`git push origin feature/caracteristica-asombrosa`)
+5. Abre un Pull Request
 
-## License
+## Licencia
 
-This project is licensed under the MIT License.
+Este proyecto está licenciado bajo la Licencia MIT.
