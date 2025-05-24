@@ -5,77 +5,31 @@ namespace App\Http\Controllers;
 use App\Models\Transaction;
 use App\Models\Receipt;
 use Illuminate\Http\Request;
-use PayPal\Rest\ApiContext;
-use PayPal\Auth\OAuthTokenCredential;
-use PayPal\Api\Amount;
-use PayPal\Api\Payer;
-use PayPal\Api\Payment;
-use PayPal\Api\RedirectUrls;
-use PayPal\Api\Transaction as PayPalTransaction;
-use PayPal\Api\ItemList;
-use PayPal\Api\Details;
-use Exception;
+use Illuminate\Support\Facades\Log;
+use PayPalHttp\HttpException;
+use PayPalCheckoutSdk\Core\PayPalHttpClient;
+use PayPalCheckoutSdk\Core\SandboxEnvironment;
+use PayPalCheckoutSdk\Orders\OrdersCaptureRequest;
+use PayPalCheckoutSdk\Orders\OrdersGetRequest;
 
 /**
- * Controlador de Pagos
- * 
- * Este controlador maneja todas las operaciones relacionadas con pagos y transacciones.
- * 
- * Puntos de Integración:
- * 1. Procesadores de Pago:
- *    - Implementar nuevos métodos para diferentes pasarelas de pago
- *    - Agregar nuevos proveedores de servicios de pago
- *    - Personalizar flujos de pago específicos
- *    - Integrar sistemas de pago locales
- * 
- * 2. Generación de Recibos:
- *    - Personalizar el formato de recibos
- *    - Agregar nuevos formatos de exportación
- *    - Implementar plantillas personalizadas
- *    - Añadir firmas digitales
- * 
- * 3. Notificaciones:
- *    - Implementar notificaciones por correo
- *    - Agregar notificaciones en tiempo real
- *    - Configurar webhooks personalizados
- *    - Integrar sistemas de mensajería
- * 
- * 4. Reportes:
- *    - Agregar nuevos tipos de reportes
- *    - Implementar exportación en diferentes formatos
- *    - Crear dashboards personalizados
- *    - Generar estadísticas específicas
+ * Controlador de Pagos con PayPal
  */
 class PaymentController extends Controller
 {
-    private $apiContext;
+    private $client;
 
-    /**
-     * Constructor del controlador.
-     * 
-     * Punto de Integración:
-     * Aquí se pueden configurar credenciales adicionales
-     * para diferentes pasarelas de pago.
-     */
     public function __construct()
     {
-        $this->apiContext = new ApiContext(
-            new OAuthTokenCredential(
-                config("services.paypal.client_id"),
-                config("services.paypal.secret")
-            )
+        $environment = new SandboxEnvironment(
+            config("services.paypal.client_id"),
+            config("services.paypal.secret")
         );
+        $this->client = new PayPalHttpClient($environment);
     }
 
     /**
      * Muestra el formulario de pago.
-     * 
-     * Punto de Integración:
-     * - Personalizar el formulario según necesidades
-     * - Agregar campos adicionales
-     * - Implementar validaciones específicas
-     * 
-     * @return \Illuminate\View\View
      */
     public function showPaymentForm()
     {
@@ -83,54 +37,97 @@ class PaymentController extends Controller
     }
 
     /**
-     * Procesa el pago.
-     * 
-     * Punto de Integración:
-     * - Agregar nuevos métodos de pago
-     * - Implementar validaciones personalizadas
-     * - Configurar flujos de pago específicos
-     * 
-     * @param Request $request
-     * @return \Illuminate\Http\RedirectResponse
+     * Procesa el pago de PayPal.
      */
     public function processPayment(Request $request)
     {
         try {
-            // Implementación del proceso de pago
-        } catch (Exception $e) {
-            return back()->with("error", $e->getMessage());
+            // Validar la solicitud
+            $validated = $request->validate([
+                "order_id" => "required|string",
+                "payment_details" => "required|array",
+                "amount" => "required|numeric|min:0.01",
+                "description" => "required|string"
+            ]);
+
+            // Obtener los detalles del pago de PayPal
+            $ordersCaptureRequest = new OrdersGetRequest($validated["order_id"]);
+            $response = $this->client->execute($ordersCaptureRequest);
+
+            // Verificar el estado del pago
+            if ($response->result->status !== "COMPLETED") {
+                return response()->json([
+                    "success" => false,
+                    "message" => "El pago no se completó correctamente"
+                ], 400);
+            }
+
+            // Crear la transacción
+            $transaction = Transaction::create([
+                "user_id" => auth()->id(),
+                "amount" => $validated["amount"],
+                "currency" => $response->result->purchase_units[0]->amount->currency_code,
+                "status" => "completed",
+                "payment_method" => "paypal",
+                "metadata" => [
+                    "paypal_order_id" => $validated["order_id"],
+                    "payment_details" => $validated["payment_details"],
+                    "description" => $validated["description"]
+                ]
+            ]);
+
+            // Generar el recibo
+            $receipt = Receipt::create([
+                "transaction_id" => $transaction->id,
+                "receipt_number" => "REC-" . str_pad($transaction->id, 8, "0", STR_PAD_LEFT),
+                "status" => "generated",
+                "metadata" => [
+                    "payment_method" => "paypal",
+                    "description" => $validated["description"]
+                ]
+            ]);
+
+            // Generar el PDF del recibo
+            $receipt->generatePDF();
+
+            return response()->json([
+                "success" => true,
+                "transaction_id" => $transaction->id,
+                "message" => "Pago procesado correctamente"
+            ]);
+
+        } catch (HttpException $e) {
+            Log::error("Error de PayPal: " . $e->getMessage());
+            return response()->json([
+                "success" => false,
+                "message" => "Error al procesar el pago con PayPal"
+            ], 500);
+        } catch (\Exception $e) {
+            Log::error("Error general: " . $e->getMessage());
+            return response()->json([
+                "success" => false,
+                "message" => "Error al procesar el pago"
+            ], 500);
         }
     }
 
     /**
-     * Maneja el éxito del pago.
-     * 
-     * Punto de Integración:
-     * - Personalizar el proceso post-pago
-     * - Agregar notificaciones adicionales
-     * - Implementar acciones específicas
-     * 
-     * @param Request $request
-     * @return \Illuminate\Http\RedirectResponse
+     * Muestra la página de éxito del pago.
      */
     public function success(Request $request)
     {
-        // Implementación del manejo de éxito
+        $transaction = Transaction::with("receipt")
+            ->findOrFail($request->query("transaction_id"));
+
+        return view("payment.success", compact("transaction"));
     }
 
     /**
      * Maneja la cancelación del pago.
-     * 
-     * Punto de Integración:
-     * - Personalizar el manejo de cancelaciones
-     * - Implementar acciones de recuperación
-     * - Agregar seguimiento específico
-     * 
-     * @param Request $request
-     * @return \Illuminate\Http\RedirectResponse
      */
-    public function cancel(Request $request)
+    public function cancel()
     {
-        // Implementación del manejo de cancelación
+        return redirect()->route("dashboard")
+            ->with("error", "El pago ha sido cancelado");
     }
 }
