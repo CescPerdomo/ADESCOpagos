@@ -2,50 +2,48 @@
 
 use App\Http\Controllers\ProfileController;
 use App\Http\Controllers\PaymentController;
+use App\Http\Controllers\AdminController;
 use Illuminate\Support\Facades\Route;
 
-Route::get('/', function () {
-    return view('welcome');
-})->name('home');
+/*
+|--------------------------------------------------------------------------
+| Web Routes
+|--------------------------------------------------------------------------
+*/
 
-// Public Routes
-Route::post('/validate-receipt', [PaymentController::class, 'validateReceipt'])
-    ->name('receipt.validate');
+Route::get("/", function () {
+    return view("welcome");
+});
 
-// Auth Routes
-Route::middleware(['auth'])->group(function () {
-    // Dashboard
-    Route::get('/dashboard', function () {
-        return view('dashboard');
-    })->name('dashboard');
+Route::get("/dashboard", function () {
+    return view("dashboard");
+})->middleware(["auth", "verified"])->name("dashboard");
 
-    // Profile Routes
-    Route::get('/profile', [ProfileController::class, 'edit'])->name('profile.edit');
-    Route::patch('/profile', [ProfileController::class, 'update'])->name('profile.update');
-    Route::delete('/profile', [ProfileController::class, 'destroy'])->name('profile.destroy');
+Route::middleware("auth")->group(function () {
+    // Rutas de perfil
+    Route::get("/profile", [ProfileController::class, "edit"])->name("profile.edit");
+    Route::patch("/profile", [ProfileController::class, "update"])->name("profile.update");
+    Route::delete("/profile", [ProfileController::class, "destroy"])->name("profile.destroy");
 
-    // Payment Routes
-    Route::prefix('payment')->group(function () {
-        Route::post('/create', [PaymentController::class, 'create'])->name('payment.create');
-        Route::get('/callback', [PaymentController::class, 'callback'])->name('payment.callback');
-        Route::get('/cancel', function () {
-            return redirect()->route('home')->with('error', 'Payment was cancelled.');
-        })->name('payment.cancel');
-        Route::get('/failed', function () {
-            return redirect()->route('home')->with('error', 'Payment failed.');
-        })->name('payment.failed');
-        Route::get('/success', function () {
-            return redirect()->route('home')->with('success', 'Payment completed successfully.');
-        })->name('payment.success');
-        Route::get('/{transaction}/pdf', [PaymentController::class, 'generatePdf'])
-            ->name('payment.pdf');
+    // Rutas de pagos
+    Route::prefix("payment")->group(function () {
+        Route::get("/form", [PaymentController::class, "showPaymentForm"])->name("payment.form");
+        Route::post("/process", [PaymentController::class, "processPayment"])->name("payment.process");
+        Route::get("/success", [PaymentController::class, "success"])->name("payment.success");
+        Route::get("/cancel", [PaymentController::class, "cancel"])->name("payment.cancel");
+    });
+
+    // Rutas de recibos
+    Route::get("/receipt/{receipt}/download", [PaymentController::class, "downloadReceipt"])
+        ->name("receipt.download");
+
+    // Rutas de administración
+    Route::middleware("admin")->prefix("admin")->group(function () {
+        Route::get("/dashboard", [AdminController::class, "dashboard"])->name("admin.dashboard");
+        Route::get("/users", [AdminController::class, "manageUsers"])->name("admin.users");
+        Route::get("/reports", [AdminController::class, "generateReports"])->name("admin.reports");
+        Route::get("/settings", [AdminController::class, "systemSettings"])->name("admin.settings");
     });
 });
 
-// Admin Routes
-Route::middleware(['auth', 'admin'])->prefix('admin')->group(function () {
-    Route::get('/dashboard', [App\Http\Controllers\AdminController::class, 'dashboard'])
-        ->name('admin.dashboard');
-});
-
-require __DIR__.'/auth.php';
+require __DIR__."/auth.php";
