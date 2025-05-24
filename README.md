@@ -105,11 +105,11 @@ El sistema estará disponible en `http://localhost:8000`
 ## Usuarios de Prueba
 
 - Administrador:
-  - Email: admin@example.com
+  - Email: admin@adesco.org.sv
   - Contraseña: password
 
 - Usuario Regular:
-  - Email: user@example.com
+  - Email: usuario@adesco.org.sv
   - Contraseña: password
 
 ## Comandos Útiles
@@ -156,4 +156,4 @@ Este proyecto está licenciado bajo la Licencia MIT - ver el archivo [LICENSE](L
 
 ## Soporte
 
-Para soporte, enviar un email a soporte@example.com o crear un issue en el repositorio.
+Para soporte, enviar un email a soporte@adesco.org.sv o crear un issue en el repositorio.
